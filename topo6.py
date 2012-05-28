@@ -75,7 +75,7 @@ class Topo1(Topo):
 
         # Host and link configuration
         hconfig = {'cpu': cpu}
-        lconfig = {'bw': bw, 'delay': delay, 'loss': 15,
+        lconfig = {'bw': bw, 'delay': delay, 'loss': 1,
                    'max_queue_size': max_queue_size }
         lconfig2 = {'bw': bw, 'delay': delay,
                    'max_queue_size': max_queue_size }

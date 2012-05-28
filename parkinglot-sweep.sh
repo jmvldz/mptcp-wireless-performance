@@ -26,9 +26,9 @@ bw=100
 
 for n in 1; do
     dir=$rootdir/n$n
-    python topo4.py --bw $bw \
+    python topo6.py --bw $bw \
         --dir $dir \
-        -t 60 \
+        -t 20 \
         -n $n
     python util/plot_rate.py --rx \
         --maxy $bw \
