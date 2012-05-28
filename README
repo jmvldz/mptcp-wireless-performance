@@ -1,0 +1,28 @@
+Instructions to run the assignment:
+Run the .sh file normally:
+"sudo ./parkinglot-sweep.sh"
+
+Answers to quiz questions:
+1) See the cwnd plot for N = 1. Why is the "additive increase" part of the sawtooth line curved and not straight?
+
+The "additive increase" part of the sawtooth shows the increase in the congestion window as more acknowledgments are received by the sender. During "additive increase," the cwnd is increased by a fixed amount for each round-trip time. One might expect this behavior to result in a straight line, since the cwnd is being incremented by the same amount per time step. However, the RTT can vary with time; in fact as the sender increases its cwnd the RTT will increase, because packets will begin to queue at the bottleneck link, increasing the time for a packet to reach its destination. At first the queue will be zero or short, so the line on the graph will appear straight; but as sender increases its cwnd and the queue at the bottleneck link grows, the increase in RTT will be significant and turn the line to a curve, since the cwnd is increased by the same amount for an increasing time step.
+
+2) Now, see the cwnd plots for other values of N. As N increases, should the cumulative cwnd sawtooth show higher or lower variance? Why?
+
+As N increases, the cumulative cwd sawtooth should show lower variance. When N = 1, if a given flow halves its cwnd, the sawtooth will depict a sharp drop. As more flows are added, a halved cwnd for one flow will not show as prominently, because the other flows will use up  produced by the reduced cwnd. This behavior will smooth out the sawtooth and show a smaller amount of variance because any drop in cwnd will be mitigated by the other flows occupying the newly available bandwidth. 
+
+For relatively smaller values of N, it might be possible that some of the flows could become synchronized and therefore display a sharper, high-variance sawtooth. However for larger values of N and in general, it seems as though synchronization is rare and higher values of N tend to reduce variance in the sawtooth.
+
+3) In your opinion, what should each bandwidth share be? In your rate plots (rate.png) for various values of N, what bandwidth share does each host get? If all hosts used UDP instead, what share would each host get?
+
+In our opinion, the bandwidth share for each outgoing link should be equally split between the flows from the incoming links. For the N=2 case, the bandwidth on the bottleneck link to the receiver should be split evenly between the first host and the traffic received from the second switch (which is sent by the second host). For the N=3 case, bandwidth on the bottleneck link will be evenly split between the first host and the second and third hosts combined. Thus, the second and third hosts will only  the bandwidth the first host receives.
+
+Our assumption is actually not the behavior of TCP in the parking lot topology. With TCP, all hosts receive a relatively equal share of bandwidth to the receiver which we attribute to s congestion avoidance features.
+
+However, if UDP were used, our fractional approach would hold. UDP does not have any notion of flow control and therefore would send at a constant rate. Hosts closest to the receiver would receive a higher share of bandwidth because they can more consistently fill the buffer for the bottleneck link.
+
+4) If one of the hosts started more than 1 flow to the receiver, how would it affect other flows?  What if that host used UDP instead of multiple TCP flows?
+
+We will answer in the context of the parking lot topology and the iperf tests in this assignment. Based on what we observed, each host will not be fully utilizing its directly connected link. Therefore, if one of the hosts started more than 1 flow, all the other flows would see a reduction in bandwidth. All flows, including the new one would then share an equal portion of bandwidth as we observed in our answer for (3).
+
+However, UDP has no notion of congestion control, so in the face of congestion, the UDP flow would continue sending data at possibly high rates while the other flows would hold back to handle congestion. Therefore if the host used UDP to start an additional flow, it would take bandwidth away from the other, TCP-abiding flows and potentially significantly reduce their share of bandwidth.TCPreceive slack any 
