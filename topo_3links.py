@@ -185,13 +185,13 @@ def run_parkinglot_expt(net, n):
     sender.cmd('ip route add default scope global nexthop via 10.0.0.2 dev \
 	    sender-eth0')
 
-    #sender.cmd('tc qdisc change dev sender-eth0 root netem delay 500ms 10ms distribution normal')
-    #sender.cmd('tc qdisc change dev sender-eth1 root netem delay 500ms 10ms distribution normal')
+    sender.cmd('tc qdisc change dev sender-eth0 root netem delay 500ms 10ms distribution normal')
+    sender.cmd('tc qdisc change dev sender-eth1 root netem delay 500ms 10ms distribution normal')
 
-    #s1 = net.getNodeByName('s1')
-    #s1.cmd('tc qdisc change dev s1-eth2 root netem delay 500ms 10ms distribution normal')
-    #s2 = net.getNodeByName('s2')
-    #s2.cmd('tc qdisc change dev s2-eth2 root netem delay 500ms 10ms distribution normal')
+    s1 = net.getNodeByName('s1')
+    s1.cmd('tc qdisc change dev s1-eth2 root netem delay 500ms 10ms distribution normal')
+    s2 = net.getNodeByName('s2')
+    s2.cmd('tc qdisc change dev s2-eth2 root netem delay 500ms 10ms distribution normal')
 
     # Start the receiver
     port = 5001
@@ -202,6 +202,17 @@ def run_parkinglot_expt(net, n):
 
     sender.sendCmd('iperf -c %s -p %s -t %d -i 1 -yc > %s/iperf_%s.txt' %
 	    (recvr.IP(), 5001, seconds, args.dir, recvr))
+
+    # Turn off and turn on links
+    sleep(10)
+    s1.cmd('ifconfig s1-eth1 down')
+    sleep(10)
+    s2.cmd('ifconfig s2-eth1 down')
+    sleep(10)
+    s2.cmd('ifconfig s2-eth1 up')
+    sleep(10)
+    s1.cmd('ifconfig s1-eth1 up')
+    
     sender.waitOutput()
 
     # TODO: start the sender iperf processes and wait for the flows to finish
