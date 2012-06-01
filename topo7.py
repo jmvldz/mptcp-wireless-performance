@@ -75,7 +75,7 @@ class Topo1(Topo):
 
         # Host and link configuration
         hconfig = {'cpu': cpu}
-        lconfig = {'bw': bw, 'delay': delay, 'loss': 0,
+        lconfig = {'bw': bw, 'delay': delay, 'loss': 1,
                    'max_queue_size': max_queue_size }
         lconfig2 = {'bw': bw, 'delay': delay,
                    'max_queue_size': max_queue_size }
@@ -142,6 +142,8 @@ def run_parkinglot_expt(net, n):
     # Get receiver and clients
     recvr = net.getNodeByName('receiver')
     sender = net.getNodeByName('sender')
+    s1 = net.getNodeByName('s1')
+    s2 = net.getNodeByName('s2')
 
     # Setup receiver IP configuration
     recvr.cmd('ifconfig receiver-eth1 10.0.0.4 netmask 255.0.0.0')
@@ -167,8 +169,11 @@ def run_parkinglot_expt(net, n):
     sender.cmd('ip route add default scope global nexthop via 10.0.0.2 dev \
 	    sender-eth0')
 
-    sender.cmd('tc qdisc change dev sender-eth0 root netem delay 200ms 0ms distribution normal')
-    sender.cmd('tc qdisc change dev sender-eth1 root netem delay 200ms 0ms distribution normal')
+    sender.cmd('tc qdisc change dev sender-eth0 root netem delay 120ms 100ms distribution normal')
+    sender.cmd('tc qdisc change dev sender-eth1 root netem delay 120ms 100ms distribution normal')
+
+    s1.cmd('tc qdisc change dev s1-eth2 root netem delay 120ms 100ms distribution normal')
+    s2.cmd('tc qdisc change dev s2-eth2 root netem delay 120ms 100ms distribution normal')
 
     # Start the receiver
     port = 5001
@@ -179,6 +184,12 @@ def run_parkinglot_expt(net, n):
 
     sender.sendCmd('iperf -c %s -p %s -t %d -i 1 -yc > %s/iperf_%s.txt' %
 	    (recvr.IP(), 5001, seconds, args.dir, recvr))
+
+    sleep(10)
+    s1.cmd('ifconfig s1-eth1 down')
+    sleep(10)
+    s1.cmd('ifconfig s1-eth1 up')
+
     sender.waitOutput()
 
     # TODO: start the sender iperf processes and wait for the flows to finish
