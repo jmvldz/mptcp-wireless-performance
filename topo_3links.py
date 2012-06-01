@@ -77,13 +77,9 @@ class Topo1(Topo):
         hconfig = {'cpu': cpu}
         lconfig_eth = {'bw': 100, 'delay': delay, 'loss': 0,
                    'max_queue_size': max_queue_size }
-        lconfig_3g_s = {'bw': 2, 'delay': 90, 'loss': 0,
+        lconfig_3g = {'bw': 2, 'delay': 90, 'loss': 0,
                    'max_queue_size': max_queue_size }
-        lconfig_wifi_s = {'bw': 2, 'delay': 8, 'loss': 0,
-                   'max_queue_size': max_queue_size }
-        lconfig_3g_r = {'bw': 2, 'delay': 90, 
-                   'max_queue_size': max_queue_size }
-        lconfig_wifi_r = {'bw': 2, 'delay': 8,
+        lconfig_wifi = {'bw': 2, 'delay': 8, 'loss': 0,
                    'max_queue_size': max_queue_size }
         
         # Switch ports 1:uplink 2:hostlink 3:downlink
@@ -100,17 +96,17 @@ class Topo1(Topo):
         self.add_link(receiver, s1,
                       port1=0, port2=uplink, **lconfig_eth)
         self.add_link(receiver, s2,
-                      port1=1, port2=uplink, **lconfig_3g_r)
+                      port1=1, port2=uplink, **lconfig_3g)
         self.add_link(receiver, s3,
-                      port1=2, port2=uplink, **lconfig_wifi_r)
+                      port1=2, port2=uplink, **lconfig_wifi)
 
 	# Wire sender
 	self.add_link(sender, s1,
 			port1=0, port2=downlink, **lconfig_eth)
 	self.add_link(sender, s2,
-			port1=1, port2=downlink, **lconfig_3g_s)
+			port1=1, port2=downlink, **lconfig_eth)
 	self.add_link(sender, s3,
-			port1=2, port2=downlink, **lconfig_wifi_s)
+			port1=2, port2=downlink, **lconfig_eth)
 
 def waitListening(client, server, port):
     "Wait until server is listening on port"
