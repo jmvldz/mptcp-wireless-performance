@@ -67,7 +67,7 @@ lg.setLogLevel('info')
 class Topo1(Topo):
     "Topo1 Topology"
 
-    def __init__(self, n=1, cpu=.1, bw=10, delay=None,
+    def __init__(self, n=1, cpu=.1, bw=100, delay=None,
                  max_queue_size=None, **params):
 
         # Initialize topo
@@ -75,11 +75,17 @@ class Topo1(Topo):
 
         # Host and link configuration
         hconfig = {'cpu': cpu}
-        lconfig = {'bw': bw, 'delay': delay, 'loss': 0,
+        lconfig_eth = {'bw': 100, 'delay': delay, 'loss': 0,
                    'max_queue_size': max_queue_size }
-        lconfig2 = {'bw': bw, 'delay': delay,
+        lconfig_3g_s = {'bw': 2, 'delay': 90, 'loss': 0,
                    'max_queue_size': max_queue_size }
-
+        lconfig_wifi_s = {'bw': 2, 'delay': 8, 'loss': 0,
+                   'max_queue_size': max_queue_size }
+        lconfig_3g_r = {'bw': 2, 'delay': 90, 
+                   'max_queue_size': max_queue_size }
+        lconfig_wifi_r = {'bw': 2, 'delay': 8,
+                   'max_queue_size': max_queue_size }
+        
         # Switch ports 1:uplink 2:hostlink 3:downlink
         uplink, downlink = 1, 2
 
@@ -92,19 +98,19 @@ class Topo1(Topo):
 
 	# Wire receiver
         self.add_link(receiver, s1,
-                      port1=0, port2=uplink, **lconfig2)
+                      port1=0, port2=uplink, **lconfig_eth)
         self.add_link(receiver, s2,
-                      port1=1, port2=uplink, **lconfig2)
+                      port1=1, port2=uplink, **lconfig_3g_r)
         self.add_link(receiver, s3,
-                      port1=2, port2=uplink, **lconfig2)
+                      port1=2, port2=uplink, **lconfig_wifi_r)
 
 	# Wire sender
 	self.add_link(sender, s1,
-			port1=0, port2=downlink, **lconfig)
+			port1=0, port2=downlink, **lconfig_eth)
 	self.add_link(sender, s2,
-			port1=1, port2=downlink, **lconfig)
+			port1=1, port2=downlink, **lconfig_3g_s)
 	self.add_link(sender, s3,
-			port1=2, port2=downlink, **lconfig)
+			port1=2, port2=downlink, **lconfig_wifi_s)
 
 def waitListening(client, server, port):
     "Wait until server is listening on port"
@@ -230,7 +236,7 @@ def main():
     topo = Topo1(n=args.n)
 
     host = custom(CPULimitedHost, cpu=.15)  # 15% of system bandwidth
-    link = custom(TCLink, bw=args.bw, delay='1ms',
+    link = custom(TCLink, delay='1ms',
                   max_queue_size=200)
 
     net = Mininet(topo=topo, host=host, link=link)
