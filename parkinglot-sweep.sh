@@ -26,7 +26,7 @@ bw=100
 
 for n in 1; do
     dir=$rootdir/n$n
-    python topo6.py --bw $bw \
+    python topo_3links.py --bw $bw \
         --dir $dir \
         -t 20 \
         -n $n

@@ -86,6 +86,7 @@ class Topo1(Topo):
 	# Hosts and switches
         s1 = self.add_switch('s1')
 	s2 = self.add_switch('s2')
+	s3 = self.add_switch('s3')
 	sender = self.add_host('sender', **hconfig)
 	receiver = self.add_host('receiver', **hconfig)
 
@@ -94,12 +95,16 @@ class Topo1(Topo):
                       port1=0, port2=uplink, **lconfig2)
         self.add_link(receiver, s2,
                       port1=1, port2=uplink, **lconfig2)
+        self.add_link(receiver, s3,
+                      port1=2, port2=uplink, **lconfig2)
 
 	# Wire sender
 	self.add_link(sender, s1,
 			port1=0, port2=downlink, **lconfig)
 	self.add_link(sender, s2,
 			port1=1, port2=downlink, **lconfig)
+	self.add_link(sender, s3,
+			port1=2, port2=downlink, **lconfig)
 
 def waitListening(client, server, port):
     "Wait until server is listening on port"
@@ -145,35 +150,46 @@ def run_parkinglot_expt(net, n):
 
     # Setup receiver IP configuration
     recvr.cmd('ifconfig receiver-eth1 10.0.0.4 netmask 255.0.0.0')
+    recvr.cmd('ifconfig receiver-eth2 10.0.0.5 netmask 255.0.0.0')
     
     recvr.cmd('ip rule add from 10.0.0.1 table 1')
     recvr.cmd('ip rule add from 10.0.0.4 table 2')
+    recvr.cmd('ip rule add from 10.0.0.5 table 3')
+
     recvr.cmd('ip route add 10.0.0.0/24 dev receiver-eth0 scope link table 1')
     recvr.cmd('ip route add default via 10.0.0.1 dev receiver-eth0 table 1')
     recvr.cmd('ip route add 10.0.0.0/24 dev receiver-eth1 scope link table 2')
     recvr.cmd('ip route add default via 10.0.0.4 dev receiver-eth1 table 2')
+    recvr.cmd('ip route add 10.0.0.0/24 dev receiver-eth2 scope link table 3')
+    recvr.cmd('ip route add default via 10.0.0.5 dev receiver-eth2 table 3')
+
     recvr.cmd('ip route add scope global nexthop via 10.0.0.1 dev \
 	    receiver-eth0')
 
     # Setup sender IP configuration
     sender.cmd('ifconfig sender-eth1 10.0.0.3 netmask 255.0.0.0')
+    sender.cmd('ifconfig sender-eth2 10.0.0.6 netmask 255.0.0.0')
 
     sender.cmd('ip rule add from 10.0.0.2 table 1')
     sender.cmd('ip rule add from 10.0.0.3 table 2')
+    sender.cmd('ip rule add from 10.0.0.6 table 3')
+
     sender.cmd('ip route add 10.0.0.0/24 dev sender-eth0 scope link table 1')
     sender.cmd('ip route add default via 10.0.0.2 dev sender-eth0 table 1')
     sender.cmd('ip route add 10.0.0.0/24 dev sender-eth1 scope link table 2')
     sender.cmd('ip route add default via 10.0.0.3 dev sender-eth1 table 2')
+    sender.cmd('ip route add 10.0.0.0/24 dev sender-eth2 scope link table 3')
+    sender.cmd('ip route add default via 10.0.0.6 dev sender-eth2 table 3')
     sender.cmd('ip route add default scope global nexthop via 10.0.0.2 dev \
 	    sender-eth0')
 
-    sender.cmd('tc qdisc change dev sender-eth0 root netem delay 500ms 10ms distribution normal')
-    sender.cmd('tc qdisc change dev sender-eth1 root netem delay 500ms 10ms distribution normal')
+    #sender.cmd('tc qdisc change dev sender-eth0 root netem delay 500ms 10ms distribution normal')
+    #sender.cmd('tc qdisc change dev sender-eth1 root netem delay 500ms 10ms distribution normal')
 
-    s1 = net.getNodeByName('s1')
-    s1.cmd('tc qdisc change dev s1-eth2 root netem delay 500ms 10ms distribution normal')
-    s2 = net.getNodeByName('s2')
-    s2.cmd('tc qdisc change dev s2-eth2 root netem delay 500ms 10ms distribution normal')
+    #s1 = net.getNodeByName('s1')
+    #s1.cmd('tc qdisc change dev s1-eth2 root netem delay 500ms 10ms distribution normal')
+    #s2 = net.getNodeByName('s2')
+    #s2.cmd('tc qdisc change dev s2-eth2 root netem delay 500ms 10ms distribution normal')
 
     # Start the receiver
     port = 5001
