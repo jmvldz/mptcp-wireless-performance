@@ -204,12 +204,12 @@ def run_parkinglot_expt(net, n):
 	    (recvr.IP(), 5001, seconds, args.dir, recvr))
 
     # Turn off and turn on links
-    sleep(10)
+    sleep(30)
     s1.cmd('ifconfig s1-eth1 down')
     sleep(10)
-    s2.cmd('ifconfig s2-eth1 down')
+    #s2.cmd('ifconfig s3-eth1 down')
     sleep(10)
-    s2.cmd('ifconfig s2-eth1 up')
+    #s2.cmd('ifconfig s3-eth1 up')
     sleep(10)
     s1.cmd('ifconfig s1-eth1 up')
     
