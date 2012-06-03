@@ -244,7 +244,14 @@ def run_parkinglot_expt(net, n):
 	    (recvr.IP(), 5001, seconds, args.dir, recvr))
 
     # Turn off and turn on links
-    sleep(10)
+#    sleep(10)
+    rates = get_rates(iface='s1-eth1')
+    print rates
+    rates = get_rates(iface='s2-eth1')
+    print rates
+    rates = get_rates(iface='s3-eth1')
+    print rates
+
     s1.cmd('ifconfig s1-eth1 down')
     sleep(10)
     s2.cmd('ifconfig s2-eth1 down')
