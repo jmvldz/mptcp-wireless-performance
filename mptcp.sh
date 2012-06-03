@@ -17,7 +17,7 @@ trap ctrlc SIGINT
 start=`date`
 exptid=`date +%b%d-%H:%M`
 rootdir=parkinglot-$exptid
-bw=100
+bw=10
 
 # Note: you need to make sure you report the results
 # for the correct port!
@@ -26,9 +26,9 @@ bw=100
 
 for n in 1; do
     dir=$rootdir/n$n
-    python topo6.py --bw $bw \
+    python topo_3links.py --bw $bw \
         --dir $dir \
-        -t 20 \
+        -t 120 \
         -n $n
     python util/plot_rate.py --rx \
         --maxy $bw \
