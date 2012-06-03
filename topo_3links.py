@@ -75,11 +75,11 @@ class Topo1(Topo):
 
         # Host and link configuration
         hconfig = {'cpu': cpu}
-        lconfig_eth = {'bw': 100, 'delay': delay, 'loss': 0,
+        lconfig_eth = {'bw': 10, 'delay': '1ms', 'loss': 0,
                    'max_queue_size': max_queue_size }
-        lconfig_3g = {'bw': 2, 'delay': 90, 'loss': 0,
+        lconfig_3g = {'bw': 2, 'delay': '75ms', 'loss': 2,
                    'max_queue_size': max_queue_size }
-        lconfig_wifi = {'bw': 2, 'delay': 8, 'loss': 0,
+        lconfig_wifi = {'bw': 2, 'delay': '5ms', 'loss': 3,
                    'max_queue_size': max_queue_size }
         
         # Switch ports 1:uplink 2:hostlink 3:downlink
@@ -96,9 +96,9 @@ class Topo1(Topo):
         self.add_link(receiver, s1,
                       port1=0, port2=uplink, **lconfig_eth)
         self.add_link(receiver, s2,
-                      port1=1, port2=uplink, **lconfig_3g)
+                      port1=1, port2=uplink, **lconfig_wifi)
         self.add_link(receiver, s3,
-                      port1=2, port2=uplink, **lconfig_wifi)
+                      port1=2, port2=uplink, **lconfig_3g)
 
 	# Wire sender
 	self.add_link(sender, s1,
@@ -185,13 +185,13 @@ def run_parkinglot_expt(net, n):
     sender.cmd('ip route add default scope global nexthop via 10.0.0.2 dev \
 	    sender-eth0')
 
-    sender.cmd('tc qdisc change dev sender-eth0 root netem delay 500ms 10ms distribution normal')
-    sender.cmd('tc qdisc change dev sender-eth1 root netem delay 500ms 10ms distribution normal')
+    #sender.cmd('tc qdisc change dev sender-eth0 root netem delay 40ms 0ms distribution normal')
+    #sender.cmd('tc qdisc change dev sender-eth1 root netem delay 40ms 20ms distribution normal')
 
     s1 = net.getNodeByName('s1')
-    s1.cmd('tc qdisc change dev s1-eth2 root netem delay 500ms 10ms distribution normal')
+    #s1.cmd('tc qdisc change dev s1-eth2 root netem delay 40ms 0ms distribution normal')
     s2 = net.getNodeByName('s2')
-    s2.cmd('tc qdisc change dev s2-eth2 root netem delay 500ms 10ms distribution normal')
+    #s2.cmd('tc qdisc change dev s2-eth2 root netem delay 40ms 20ms distribution normal')
 
     # Start the receiver
     port = 5001
@@ -204,13 +204,13 @@ def run_parkinglot_expt(net, n):
 	    (recvr.IP(), 5001, seconds, args.dir, recvr))
 
     # Turn off and turn on links
-    sleep(30)
+    sleep(20)
     s1.cmd('ifconfig s1-eth1 down')
-    sleep(10)
-    #s2.cmd('ifconfig s3-eth1 down')
-    sleep(10)
-    #s2.cmd('ifconfig s3-eth1 up')
-    sleep(10)
+    sleep(20)
+    s2.cmd('ifconfig s2-eth1 down')
+    sleep(20)
+    s2.cmd('ifconfig s2-eth1 up')
+    sleep(20)
     s1.cmd('ifconfig s1-eth1 up')
     
     sender.waitOutput()
@@ -243,8 +243,7 @@ def main():
     topo = Topo1(n=args.n)
 
     host = custom(CPULimitedHost, cpu=.15)  # 15% of system bandwidth
-    link = custom(TCLink, delay='1ms',
-                  max_queue_size=200)
+    link = custom(TCLink, max_queue_size=200)
 
     net = Mininet(topo=topo, host=host, link=link)
 
