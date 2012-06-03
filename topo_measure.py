@@ -79,7 +79,7 @@ class Topo1(Topo):
                    'max_queue_size': max_queue_size }
         lconfig_3g = {'bw': 2, 'delay': '75ms', 'loss': 2,
                    'max_queue_size': max_queue_size }
-        lconfig_wifi = {'bw': 2, 'delay': '5ms', 'loss': 4,
+        lconfig_wifi = {'bw': 2, 'delay': '5ms', 'loss': 3,
                    'max_queue_size': max_queue_size }
         
         # Switch ports 1:uplink 2:hostlink 3:downlink
@@ -244,18 +244,18 @@ def run_parkinglot_expt(net, n):
 	    (recvr.IP(), 5001, seconds, args.dir, recvr))
 
     # Turn off and turn on links
-    #sleep(20)
-    #s1.cmd('ifconfig s1-eth1 down')
-    #sleep(20)
-    #s2.cmd('ifconfig s2-eth1 down')
-    #sleep(20)
-    #s2.cmd('ifconfig s2-eth1 up')
-    #sleep(20)
-    #s1.cmd('ifconfig s1-eth1 up')
+    sleep(10)
+    s1.cmd('ifconfig s1-eth1 down')
+    sleep(10)
+    s2.cmd('ifconfig s2-eth1 down')
+    sleep(10)
+    s2.cmd('ifconfig s2-eth1 up')
+    sleep(10)
+    s1.cmd('ifconfig s1-eth1 up')
     
-    rates = get_rates(iface='s1-eth1')
-    print 'hello'
-    print rates
+    #rates = get_rates(iface='s1-eth1')
+    #print 'hello'
+    #print rates
 
     sender.waitOutput()
 
