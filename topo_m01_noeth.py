@@ -169,9 +169,11 @@ def get_rates(iface, nsamples=1, period=30,
         rate2 = (txbytes2 - last_txbytes2) * 8.0 / 1e6 / elapsed
         print rate1
         print rate2
+        print rate1 + rate2
         if last_txbytes1 != 0:
             ret.append(rate1)
             ret.append(rate2)
+            ret.append(rate1+rate2)
         last_txbytes1 = txbytes1
         last_txbytes2 = txbytes2
         sys.stdout.flush()
@@ -221,12 +223,8 @@ def run_parkinglot_expt(net, n):
 	    sender-eth0')
 
     # Change buffer sizes
-<<<<<<< HEAD:topo_m01_noeth.py
     recvr.cmd("echo 'net.ipv4.tcp_rmem = 10240 87380 1677721' >> /etc/sysctl.conf")
-=======
-    recvr.cmd("echo 'net.ipv4.tcp_rmem = 10240 87380 8388608' >> /etc/sysctl.conf")
     recvr.cmd('sysctl -p')
->>>>>>> 24862cb822ee0958605e82ac39e9f4b82bafe3a3:topo_m05.py
 
     #sender.cmd('tc qdisc change dev sender-eth0 root netem delay 40ms 0ms distribution normal')
     #sender.cmd('tc qdisc change dev sender-eth1 root netem delay 40ms 20ms distribution normal')

@@ -26,11 +26,7 @@ bw=10
 
 for n in 1; do
     dir=$rootdir/n$n
-<<<<<<< HEAD
     python topo_m01_noeth.py --bw $bw \
-=======
-    python topo_m005.py --bw $bw \
->>>>>>> 24862cb822ee0958605e82ac39e9f4b82bafe3a3
         --dir $dir \
         -t 60 \
         -n $n
