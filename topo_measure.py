@@ -148,7 +148,7 @@ def get_txbytes(iface):
     return float(line.split()[9])
 
 def get_rates(iface, nsamples=1, period=10,
-              wait=5):
+              wait=10):
     """Returns rate in Mbps"""
     # Returning nsamples requires one extra to start the timer.                                                                                                                 
     nsamples += 1
@@ -245,22 +245,23 @@ def run_parkinglot_expt(net, n):
 
     # Turn off and turn on links
 #    sleep(10)
-    rates = get_rates(iface='s1-eth1')
+    interface = 's1-eth1'
+    rates = get_rates(iface=interface)
     print rates
-    rates = get_rates(iface='s2-eth1')
-    print rates
-    rates = get_rates(iface='s3-eth1')
-    print rates
-
     s1.cmd('ifconfig s1-eth1 down')
-    sleep(10)
+    rates = get_rates(iface=interface)
+    print rates
     s2.cmd('ifconfig s2-eth1 down')
-    sleep(10)
+    rates = get_rates(iface=interface)
+    print rates
     s2.cmd('ifconfig s2-eth1 up')
-    sleep(10)
+    rates = get_rates(iface=interface)
+    print rates
     s1.cmd('ifconfig s1-eth1 up')
+    rates = get_rates(iface=interface)
+    print rates
     
-    #rates = get_rates(iface='s1-eth1')
+    #rates = get_rates(iface=interface)
     #print 'hello'
     #print rates
 

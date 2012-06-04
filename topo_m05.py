@@ -147,30 +147,45 @@ def get_txbytes(iface):
                         (iface, lines))
     return float(line.split()[9])
 
-def get_rates(iface, nsamples=1, period=10,
-              wait=5):
+def get_rates(iface, nsamples=1, period=30,
+              wait=10):
     """Returns rate in Mbps"""
     # Returning nsamples requires one extra to start the timer.                                                                                                                 
     nsamples += 1
     last_time = 0
-    last_txbytes = 0
+    last_txbytes1 = 0
+    last_txbytes2 = 0
+    last_txbytes3 = 0
     ret = []
     sleep(wait)
+    iface1 = 's1-eth1'
+    iface2 = 's2-eth1'
+    iface3 = 's3-eth1'
     while nsamples:
         nsamples -= 1
 
-        txbytes = get_txbytes(iface)
+        txbytes1 = get_txbytes(iface1)
+        txbytes2 = get_txbytes(iface2)
+        txbytes3 = get_txbytes(iface3)
     
         now = time()
         elapsed = now - last_time
  
         last_time = now
 
-        rate = (txbytes - last_txbytes) * 8.0 / 1e6 / elapsed
-        print rate
-        if last_txbytes != 0:
-            ret.append(rate)
-        last_txbytes = txbytes
+        rate1 = (txbytes1 - last_txbytes1) * 8.0 / 1e6 / elapsed
+        rate2 = (txbytes2 - last_txbytes2) * 8.0 / 1e6 / elapsed
+        rate3 = (txbytes3 - last_txbytes3) * 8.0 / 1e6 / elapsed
+        print rate1
+        print rate2
+        print rate3
+        if last_txbytes1 != 0:
+            ret.append(rate1)
+            ret.append(rate2)
+            ret.append(rate3)
+        last_txbytes1 = txbytes1
+        last_txbytes2 = txbytes2
+        last_txbytes3 = txbytes3
         sys.stdout.flush()
         sleep(period)
     return ret
@@ -250,18 +265,18 @@ def run_parkinglot_expt(net, n):
 #    sleep(10)
     rates = get_rates(iface='s1-eth1')
     print rates
-    rates = get_rates(iface='s2-eth1')
-    print rates
-    rates = get_rates(iface='s3-eth1')
-    print rates
+#    rates = get_rates(iface='s2-eth1')
+#    print rates
+#    rates = get_rates(iface='s3-eth1')
+#    print rates
 
-    s1.cmd('ifconfig s1-eth1 down')
-    sleep(10)
-    s2.cmd('ifconfig s2-eth1 down')
-    sleep(10)
-    s2.cmd('ifconfig s2-eth1 up')
-    sleep(10)
-    s1.cmd('ifconfig s1-eth1 up')
+#    s1.cmd('ifconfig s1-eth1 down')
+#    sleep(10)
+#    s2.cmd('ifconfig s2-eth1 down')
+#    sleep(10)
+#    s2.cmd('ifconfig s2-eth1 up')
+#    sleep(10)
+#    s1.cmd('ifconfig s1-eth1 up')
     
     #rates = get_rates(iface='s1-eth1')
     #print 'hello'
