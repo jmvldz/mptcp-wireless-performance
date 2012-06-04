@@ -88,25 +88,20 @@ class Topo1(Topo):
 	# Hosts and switches
         s1 = self.add_switch('s1')
 	s2 = self.add_switch('s2')
-	s3 = self.add_switch('s3')
 	sender = self.add_host('sender', **hconfig)
 	receiver = self.add_host('receiver', **hconfig)
 
 	# Wire receiver
         self.add_link(receiver, s1,
-                      port1=0, port2=uplink, **lconfig_eth)
+                      port1=0, port2=uplink, **lconfig_3g)
         self.add_link(receiver, s2,
                       port1=1, port2=uplink, **lconfig_wifi)
-        self.add_link(receiver, s3,
-                      port1=2, port2=uplink, **lconfig_3g)
 
 	# Wire sender
 	self.add_link(sender, s1,
 			port1=0, port2=downlink, **lconfig_eth)
 	self.add_link(sender, s2,
 			port1=1, port2=downlink, **lconfig_eth)
-	self.add_link(sender, s3,
-			port1=2, port2=downlink, **lconfig_eth)
 
 def waitListening(client, server, port):
     "Wait until server is listening on port"
@@ -155,18 +150,15 @@ def get_rates(iface, nsamples=1, period=30,
     last_time = 0
     last_txbytes1 = 0
     last_txbytes2 = 0
-    last_txbytes3 = 0
     ret = []
     sleep(wait)
     iface1 = 's1-eth1'
     iface2 = 's2-eth1'
-    iface3 = 's3-eth1'
     while nsamples:
         nsamples -= 1
 
         txbytes1 = get_txbytes(iface1)
         txbytes2 = get_txbytes(iface2)
-        txbytes3 = get_txbytes(iface3)
     
         now = time()
         elapsed = now - last_time
@@ -175,17 +167,13 @@ def get_rates(iface, nsamples=1, period=30,
 
         rate1 = (txbytes1 - last_txbytes1) * 8.0 / 1e6 / elapsed
         rate2 = (txbytes2 - last_txbytes2) * 8.0 / 1e6 / elapsed
-        rate3 = (txbytes3 - last_txbytes3) * 8.0 / 1e6 / elapsed
         print rate1
         print rate2
-        print rate3
         if last_txbytes1 != 0:
             ret.append(rate1)
             ret.append(rate2)
-            ret.append(rate3)
         last_txbytes1 = txbytes1
         last_txbytes2 = txbytes2
-        last_txbytes3 = txbytes3
         sys.stdout.flush()
         sleep(period)
     return ret
@@ -207,41 +195,33 @@ def run_parkinglot_expt(net, n):
 
     # Setup receiver IP configuration
     recvr.cmd('ifconfig receiver-eth1 10.0.0.4 netmask 255.0.0.0')
-    recvr.cmd('ifconfig receiver-eth2 10.0.0.5 netmask 255.0.0.0')
     
     recvr.cmd('ip rule add from 10.0.0.1 table 1')
     recvr.cmd('ip rule add from 10.0.0.4 table 2')
-    recvr.cmd('ip rule add from 10.0.0.5 table 3')
 
     recvr.cmd('ip route add 10.0.0.0/24 dev receiver-eth0 scope link table 1')
     recvr.cmd('ip route add default via 10.0.0.1 dev receiver-eth0 table 1')
     recvr.cmd('ip route add 10.0.0.0/24 dev receiver-eth1 scope link table 2')
     recvr.cmd('ip route add default via 10.0.0.4 dev receiver-eth1 table 2')
-    recvr.cmd('ip route add 10.0.0.0/24 dev receiver-eth2 scope link table 3')
-    recvr.cmd('ip route add default via 10.0.0.5 dev receiver-eth2 table 3')
 
     recvr.cmd('ip route add scope global nexthop via 10.0.0.1 dev \
 	    receiver-eth0')
 
     # Setup sender IP configuration
     sender.cmd('ifconfig sender-eth1 10.0.0.3 netmask 255.0.0.0')
-    sender.cmd('ifconfig sender-eth2 10.0.0.6 netmask 255.0.0.0')
 
     sender.cmd('ip rule add from 10.0.0.2 table 1')
     sender.cmd('ip rule add from 10.0.0.3 table 2')
-    sender.cmd('ip rule add from 10.0.0.6 table 3')
 
     sender.cmd('ip route add 10.0.0.0/24 dev sender-eth0 scope link table 1')
     sender.cmd('ip route add default via 10.0.0.2 dev sender-eth0 table 1')
     sender.cmd('ip route add 10.0.0.0/24 dev sender-eth1 scope link table 2')
     sender.cmd('ip route add default via 10.0.0.3 dev sender-eth1 table 2')
-    sender.cmd('ip route add 10.0.0.0/24 dev sender-eth2 scope link table 3')
-    sender.cmd('ip route add default via 10.0.0.6 dev sender-eth2 table 3')
     sender.cmd('ip route add default scope global nexthop via 10.0.0.2 dev \
 	    sender-eth0')
 
     # Change buffer sizes
-    recvr.cmd("echo 'net.ipv4.tcp_rmem = 10240 87380 8388608' >> /etc/sysctl.conf")
+    recvr.cmd("echo 'net.ipv4.tcp_rmem = 10240 87380 1677721' >> /etc/sysctl.conf")
 
     #sender.cmd('tc qdisc change dev sender-eth0 root netem delay 40ms 0ms distribution normal')
     #sender.cmd('tc qdisc change dev sender-eth1 root netem delay 40ms 20ms distribution normal')

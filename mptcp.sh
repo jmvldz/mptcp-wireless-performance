@@ -26,7 +26,7 @@ bw=10
 
 for n in 1; do
     dir=$rootdir/n$n
-    python topo_m05.py --bw $bw \
+    python topo_m01_noeth.py --bw $bw \
         --dir $dir \
         -t 60 \
         -n $n
