@@ -219,8 +219,11 @@ def run_parkinglot_expt(net, n):
 	    sender-eth0')
 
     # Change buffer sizes
-    sender.cmd("echo 'net.ipv4.tcp_wmem=1024000 1024000 1024000' >> /etc/sysctl.conf")
+    sender.cmd("echo 'net.ipv4.tcp_rmem=204800 204800 204800' >> /etc/sysctl.conf")
+    sender.cmd("echo 'net.ipv4.tcp_wmem=204800 204800 204800' >> /etc/sysctl.conf")
     recvr.cmd("echo 'net.ipv4.tcp_rmem=204800 204800 204800' >> /etc/sysctl.conf")
+    recvr.cmd("echo 'net.ipv4.tcp_wmem=204800 204800 204800' >> /etc/sysctl.conf")
+    sender.cmd('sysctl -p')
     recvr.cmd('sysctl -p')
 
     s1 = net.getNodeByName('s1')
