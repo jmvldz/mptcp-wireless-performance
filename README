@@ -1,4 +1,12 @@
-Instructions to run the project:
+MPTCP Wireless Performance
 
-Run the .sh file normally:
+Based on "How Hard Can It Be" - NSDI 2012
+
+To run:
 "sudo ./mptcp_sweep.sh"
+
+Files:
+__init__.py - Python module file
+topo_m*.py - Python Mininet topologies with routing table configuration
+mptcp.sh - Driver for Mininet topology scripts
+mptcp_sweep.sh - Runs mptcp.sh for different topologies
