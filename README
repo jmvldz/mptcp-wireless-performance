@@ -3,7 +3,7 @@ MPTCP Wireless Performance
 Based on "How Hard Can It Be" - NSDI 2012
 
 To run:
-"sudo ./mptcp_sweep.sh"
+sudo ./mptcp_sweep.sh
 
 Files:
 __init__.py - Python module file
