@@ -16,7 +16,7 @@ trap ctrlc SIGINT
 
 start=`date`
 exptid=`date +%b%d-%H:%M`
-rootdir=parkinglot-$exptid
+rootdir=mptcp-$2-$exptid
 bw=10
 
 # Note: you need to make sure you report the results
@@ -25,8 +25,8 @@ bw=10
 # client is connected to port 2 on its switch.
 
 for n in 1; do
-    dir=$rootdir/n$n
-    python topo_m01_noeth.py --bw $bw \
+    dir=$rootdir
+    python $1 --bw $bw \
         --dir $dir \
         -t 60 \
         -n $n
