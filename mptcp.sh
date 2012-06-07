@@ -29,7 +29,8 @@ for n in 1; do
     python $1 --bw $bw \
         --dir $dir \
         -t 60 \
-        -n $n
+        -n $n \
+        -s $3
     python util/plot_rate.py --rx \
         --maxy $bw \
         --xlabel 'Time (s)' \
