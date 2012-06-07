@@ -77,9 +77,9 @@ class Topo1(Topo):
         hconfig = {'cpu': cpu}
         lconfig_eth = {'bw': 10, 'delay': '1ms', 'loss': 0,
                    'max_queue_size': max_queue_size }
-        lconfig_3g = {'bw': 2, 'delay': '75ms', 'loss': 2,
+        lconfig_3g = {'bw': 10, 'delay': '75ms', 'loss': 0,
                    'max_queue_size': max_queue_size }
-        lconfig_wifi = {'bw': 2, 'delay': '5ms', 'loss': 3,
+        lconfig_wifi = {'bw': 10, 'delay': '5ms', 'loss': 0,
                    'max_queue_size': max_queue_size }
         
         # Switch ports 1:uplink 2:hostlink 3:downlink
@@ -202,11 +202,11 @@ def run_parkinglot_expt(net, n):
     # Turn off and turn on links
     sleep(20)
     s1.cmd('ifconfig s1-eth1 down')
-    sleep(20)
+    sleep(10)
     s2.cmd('ifconfig s2-eth1 down')
     sleep(20)
     s2.cmd('ifconfig s2-eth1 up')
-    sleep(20)
+    sleep(10)
     s1.cmd('ifconfig s1-eth1 up')
     
     sender.waitOutput()
