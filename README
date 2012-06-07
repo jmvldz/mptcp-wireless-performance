@@ -7,6 +7,8 @@ sudo ./mptcp_sweep.sh
 
 Files:
 __init__.py - Python module file
-topo_m*.py - Python Mininet topologies with routing table configuration
+topo_measure.py - Performs MPTCP and TCP 3G runs for various buffer sizes
+topo_wifi.py - Performs TCP WiFi runs for various buffer sizes
+topo_wireless_handoff.py - Replicates wireless handoff demonstration
 mptcp.sh - Driver for Mininet topology scripts
-mptcp_sweep.sh - Runs mptcp.sh for different topologies
+mptcp_sweep.sh - Runs mptcp.sh for different topologies and buffer sizes
